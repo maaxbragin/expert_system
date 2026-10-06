@@ -1,0 +1,355 @@
+{
+    "metadata": {
+        "domain": "Диагностика респираторных заболеваний кошек",
+        "version": "2.0",
+        "description": "Продукционная база знаний для оболочки ЭС (ЛР №2)"
+    },
+
+    "facts": [
+        {
+            "name": "cough",
+            "type": "boolean",
+            "kind": "initial",
+            "level": null,
+            "ru": "Кашель",
+            "question": "Наблюдается ли кашель"
+        },
+        {
+            "name": "sneezing",
+            "type": "boolean",
+            "kind": "initial",
+            "level": null,
+            "ru": "Чихание",
+            "question": "Наблюдается ли чихание"
+        },
+        {
+            "name": "dyspnea",
+            "type": "boolean",
+            "kind": "initial",
+            "level": null,
+            "ru": "Одышка",
+            "question": "Наблюдается ли одышка"
+        },
+        {
+            "name": "mouth_breathing",
+            "type": "boolean",
+            "kind": "initial",
+            "level": null,
+            "ru": "Дыхание с открытым ртом",
+            "question": null,
+            "default": true
+        },
+        {
+            "name": "weakness",
+            "type": "boolean",
+            "kind": "initial",
+            "level": null,
+            "ru": "Упадок сил",
+            "question": "Наблюдается ли упадок сил"
+        },
+        {
+            "name": "cyanosis",
+            "type": "boolean",
+            "kind": "initial",
+            "level": null,
+            "ru": "Синюшность слизистых оболочек",
+            "question": "Есть ли синюшность слизистых оболочек"
+        },
+        {
+            "name": "temperature",
+            "type": "integer",
+            "kind": "initial",
+            "level": null,
+            "ru": "Температура тела",
+            "question": "Температура тела, градусов Цельсия",
+            "min": 35,
+            "max": 43
+        },
+
+        {
+            "name": "fever",
+            "type": "boolean",
+            "kind": "derived",
+            "level": "symptom",
+            "ru": "Лихорадка"
+        },
+        {
+            "name": "hypoxia",
+            "type": "boolean",
+            "kind": "derived",
+            "level": "syndrome",
+            "ru": "Гипоксия"
+        },
+        {
+            "name": "rhinitis",
+            "type": "boolean",
+            "kind": "derived",
+            "level": "syndrome",
+            "ru": "Ринит/конъюнктивит"
+        },
+        {
+            "name": "tracheitis",
+            "type": "boolean",
+            "kind": "derived",
+            "level": "syndrome",
+            "ru": "Трахеит"
+        },
+        {
+            "name": "bronchitis",
+            "type": "boolean",
+            "kind": "derived",
+            "level": "syndrome",
+            "ru": "Бронхит"
+        },
+        {
+            "name": "pulmonary_edema",
+            "type": "boolean",
+            "kind": "derived",
+            "level": "disease",
+            "ru": "Отёк лёгких"
+        },
+        {
+            "name": "chlamydiosis",
+            "type": "boolean",
+            "kind": "derived",
+            "level": "disease",
+            "ru": "Хламидиоз"
+        },
+        {
+            "name": "calicivirus",
+            "type": "boolean",
+            "kind": "derived",
+            "level": "disease",
+            "ru": "Калицивироз"
+        },
+        {
+            "name": "asthma",
+            "type": "boolean",
+            "kind": "derived",
+            "level": "disease",
+            "ru": "Астма"
+        }
+    ],
+
+    "rules": [
+        {
+            "id": "R1",
+            "name": "fever",
+            "priority": 80,
+            "conditions": [
+                {
+                    "fact": "temperature",
+                    "operator": ">=",
+                    "value": 39
+                }
+            ],
+            "conclusion": {
+                "fact": "fever",
+                "value": true,
+                "reason": "температура от 39 градусов"
+            }
+        },
+        {
+            "id": "R2",
+            "name": "no_fever",
+            "priority": 80,
+            "conditions": [
+                {
+                    "fact": "temperature",
+                    "operator": "<",
+                    "value": 39
+                }
+            ],
+            "conclusion": {
+                "fact": "fever",
+                "value": false,
+                "reason": "температура ниже 39 градусов"
+            }
+        },
+        {
+            "id": "R3",
+            "name": "hypoxia",
+            "priority": 50,
+            "conditions": [
+                {
+                    "fact": "dyspnea",
+                    "operator": "==",
+                    "value": true
+                },
+                {
+                    "fact": "mouth_breathing",
+                    "operator": "==",
+                    "value": true
+                }
+            ],
+            "conclusion": {
+                "fact": "hypoxia",
+                "value": true,
+                "reason": "одышка и дыхание с открытым ртом"
+            }
+        },
+        {
+            "id": "R4",
+            "name": "rhinitis",
+            "priority": 50,
+            "conditions": [
+                {
+                    "fact": "sneezing",
+                    "operator": "==",
+                    "value": true
+                },
+                {
+                    "fact": "fever",
+                    "operator": "==",
+                    "value": true
+                }
+            ],
+            "conclusion": {
+                "fact": "rhinitis",
+                "value": true,
+                "reason": "чихание на фоне температуры от 39 градусов"
+            }
+        },
+        {
+            "id": "R5",
+            "name": "tracheitis",
+            "priority": 50,
+            "conditions": [
+                {
+                    "fact": "cough",
+                    "operator": "==",
+                    "value": true
+                },
+                {
+                    "fact": "fever",
+                    "operator": "==",
+                    "value": true
+                }
+            ],
+            "conclusion": {
+                "fact": "tracheitis",
+                "value": true,
+                "reason": "кашель на фоне температуры от 39 градусов"
+            }
+        },
+        {
+            "id": "R6",
+            "name": "bronchitis_by_weakness",
+            "priority": 50,
+            "conditions": [
+                {
+                    "fact": "cough",
+                    "operator": "==",
+                    "value": true
+                },
+                {
+                    "fact": "weakness",
+                    "operator": "==",
+                    "value": true
+                }
+            ],
+            "conclusion": {
+                "fact": "bronchitis",
+                "value": true,
+                "reason": "кашель в сочетании с упадком сил"
+            }
+        },
+        {
+            "id": "R7",
+            "name": "bronchitis_by_cyanosis",
+            "priority": 50,
+            "conditions": [
+                {
+                    "fact": "cyanosis",
+                    "operator": "==",
+                    "value": true
+                },
+                {
+                    "fact": "bronchitis",
+                    "operator": "==",
+                    "value": true,
+                    "negated": true
+                }
+            ],
+            "conclusion": {
+                "fact": "bronchitis",
+                "value": true,
+                "reason": "синюшность слизистых оболочек"
+            }
+        },
+        {
+            "id": "R8",
+            "name": "pulmonary_edema",
+            "priority": 40,
+            "conditions": [
+                {
+                    "fact": "hypoxia",
+                    "operator": "==",
+                    "value": true
+                }
+            ],
+            "conclusion": {
+                "fact": "pulmonary_edema",
+                "value": true,
+                "reason": "развившаяся гипоксия"
+            }
+        },
+        {
+            "id": "R9",
+            "name": "chlamydiosis",
+            "priority": 40,
+            "conditions": [
+                {
+                    "fact": "rhinitis",
+                    "operator": "==",
+                    "value": true
+                }
+            ],
+            "conclusion": {
+                "fact": "chlamydiosis",
+                "value": true,
+                "reason": "ринит и конъюнктивит"
+            }
+        },
+        {
+            "id": "R10",
+            "name": "calicivirus",
+            "priority": 40,
+            "conditions": [
+                {
+                    "fact": "tracheitis",
+                    "operator": "==",
+                    "value": true
+                },
+                {
+                    "fact": "calicivirus",
+                    "operator": "==",
+                    "value": true,
+                    "negated": true
+                }
+            ],
+            "conclusion": {
+                "fact": "calicivirus",
+                "value": true,
+                "reason": "трахеит"
+            }
+        },
+        {
+            "id": "R11",
+            "name": "asthma",
+            "priority": 40,
+            "conditions": [
+                {
+                    "fact": "bronchitis",
+                    "operator": "==",
+                    "value": true
+                }
+            ],
+            "conclusion": {
+                "fact": "asthma",
+                "value": true,
+                "reason": "хронический бронхит"
+            }
+        }
+    ]
+}
