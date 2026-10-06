@@ -1,4 +1,23 @@
 class Explainer:
+    # Русские имена фактов — для красивого вывода
+    RU_NAMES = {
+        "cough":           "Кашель",
+        "sneezing":        "Чихание",
+        "dyspnea":         "Одышка",
+        "mouth_breathing": "Дыхание с открытым ртом",
+        "weakness":        "Упадок сил",
+        "cyanosis":        "Синюшность слизистых оболочек",
+        "temperature":     "Температура",
+        "fever":           "Лихорадка",
+        "hypoxia":         "Гипоксия",
+        "rhinitis":        "Ринит/конъюнктивит",
+        "tracheitis":      "Трахеит",
+        "bronchitis":      "Бронхит",
+        "pulmonary_edema": "Отёк лёгких",
+        "chlamydiosis":    "Хламидиоз",
+        "calicivirus":     "Калицивироз",
+        "asthma":          "Астма",
+    }
     def __init__(self, wm, kb):
         # wm — рабочая память (единственный источник данных)
         # kb — только чтобы достать русские имена и уровни фактов
@@ -12,22 +31,29 @@ class Explainer:
                 return rec
         return None
 
-    def why(self, fact_name, depth=0):
+    def why(self, fact_name, depth=0, visited=None):
+        if visited is None:
+            visited = set()
+
         indent = "    " * depth
-        fact_ru = self.kb.get_fact_ru(fact_name)
+        fact_ru = self.RU_NAMES.get(fact_name, fact_name)
         value = self.wm.get_fact(fact_name)
         print(f"{indent}{fact_ru} = {value}")
 
+        if fact_name in visited:
+            print(f"{indent}  (уже объяснено выше)")
+            return
+        visited.add(fact_name)
+
         fire = self._find_fire(fact_name)
         if fire is None:
-            # Факт не выводился — значит, введён пользователем / изначально
             print(f"{indent}  (исходный факт)")
             return
 
         print(f"{indent}  ← правило {fire.rule_id} ({fire.rule_name})")
         print(f"{indent}  ← из фактов:")
         for src_name in fire.matched_facts:
-            self.why(src_name, depth + 2)
+            self.why(src_name, depth + 2, visited)
 
     def trace(self):
         """Напечатать журнал срабатываний в порядке вывода."""
