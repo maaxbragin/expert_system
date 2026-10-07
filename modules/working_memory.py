@@ -1,4 +1,4 @@
-
+# Класс для записи о срабатывании одного правила.
 class FireRecord:
     def __init__(self, rule_id, rule_name, matched_facts,
                  conclusion_fact, conclusion_value, iteration):
@@ -8,14 +8,14 @@ class FireRecord:
         self.conclusion_fact = conclusion_fact
         self.conclusion_value = conclusion_value
         self.iteration = iteration
-
+    # для красивого выводп
     def __repr__(self):
         return (
             f"<FireRecord #{self.iteration} {self.rule_id} "
             f"{self.rule_name} -> {self.conclusion_fact}="
             f"{self.conclusion_value}>"
         )
-
+# Класс для хранения записей в память
 class WorkingMemory:
     def __init__(self):
         self._facts: dict[str, any] = {}

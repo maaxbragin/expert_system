@@ -6,6 +6,7 @@ class InferenceEngine:
         self.kb = kb
         self.wm = wm
         self.resolver = resolver or SalienceResolver()
+
     #  Проверка условий
 
     def _check_condition(self, cond):
@@ -27,12 +28,18 @@ class InferenceEngine:
 
     @staticmethod
     def _compare(actual, op, expected):
-        if op == "==": return actual == expected
-        if op == "!=": return actual != expected
-        if op == ">":  return actual >  expected
-        if op == "<":  return actual <  expected
-        if op == ">=": return actual >= expected
-        if op == "<=": return actual <= expected
+        if op == "==":
+            return actual == expected
+        if op == "!=":
+            return actual != expected
+        if op == ">":
+            return actual > expected
+        if op == "<":
+            return actual < expected
+        if op == ">=":
+            return actual >= expected
+        if op == "<=":
+            return actual <= expected
         raise ValueError(f"Неизвестный оператор: {op}")
 
     def _match_rule(self, rule):
@@ -41,7 +48,7 @@ class InferenceEngine:
             if not self._check_condition(cond):
                 return None
             if cond.get("negated", False):
-                continue                       # ← добавить
+                continue  # ← добавить
             matched[cond["fact"]] = self.wm.get_fact(cond["fact"])
         return matched
 
@@ -61,14 +68,18 @@ class InferenceEngine:
 
                 concl = rule["conclusion"]
                 # Пропускаем, если заключение уже выведено
-                if (self.wm.has_fact(concl["fact"]) and
-                        self.wm.get_fact(concl["fact"]) == concl["value"]):
+                if (
+                    self.wm.has_fact(concl["fact"])
+                    and self.wm.get_fact(concl["fact"]) == concl["value"]
+                ):
                     continue
 
-                activations.append({
-                    "rule": rule,
-                    "matched_facts": matched,
-                })
+                activations.append(
+                    {
+                        "rule": rule,
+                        "matched_facts": matched,
+                    }
+                )
 
             # 2. Нет активаций — вывод завершён
             if not activations:

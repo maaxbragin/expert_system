@@ -171,6 +171,11 @@ def main():
             explainer.why(name)
             print()
 
+    print()
+    print("Журнал срабатываний")
+    explainer.trace()
+
 
 if __name__ == "__main__":
     main()
+
